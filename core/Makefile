@@ -1,3 +1,84 @@
+# Put some miscellaneous rules here
+
+# Build system colors
+#
+# PFX: Prefix "target C++:" in yellow
+# INS: Module "Install:" output color (cyan for ics)
+
+ifneq ($(BUILD_WITH_COLORS),0)
+  CL_PFX="\033[33m"
+  CL_INS="\033[36m"
+  CL_RED="\033[31m"
+  CL_GRN="\033[32m"
+  CL_YLW="\033[33m"
+  CL_BLU="\033[34m"
+  CL_MAG="\033[35m"
+  CL_CYN="\033[36m"
+  CL_RST="\033[0m"
+
+### Light/bold colors ###
+#red
+  CL_BRD="\033[1;31m"
+#green
+  CL_BGN="\033[1;32m"
+#yellow
+  CL_BYW="\033[1;33m"
+#blue
+  CL_BBL="\033[1;34m"
+#magenta
+  CL_BMG="\033[1;35m"
+#cyan
+  CL_BCY="\033[1;36m"
+#white
+  CL_BWT="\033[1;37m"
+endif
+
+# High Intensty
+IBlack="\033[0;90m"
+IRed="\033[0;91m"
+IGreen="\033[0;92m"
+IYellow="\033[0;93m"
+IBlue="\033[0;94m"
+IPurple="\033[0;95m"
+ICyan="\033[0;96m"
+IWhite="\033[0;97m"
+
+# Bold High Intensty
+BIBlack="\033[1;90m"
+BIRed="\033[1;91m"
+BIGreen="\033[1;92m"
+BIYellow="\033[1;93m"
+BIBlue="\033[1;94m"
+BIPurple="\033[1;95m"
+BICyan="\033[1;96m"
+BIWhite="\033[1;97m"
+
+# Underline
+UBlack="\033[4;30m"
+URed="\033[4;31m"
+UGreen="\033[4;32m"
+UYellow="\033[4;33m"
+UBlue="\033[4;34m"
+UPurple=033[4;35m"
+UCyan="\033[4;36m"
+UWhite="\033[4;37m"
+
+#Fancy finish logo colors
+eeeeee="\033[38;5;255m"
+e4e4e4="\033[38;5;254m"
+dadada="\033[38;5;253m"
+d0d0d0="\033[38;5;252m"
+ff875f="\033[38;5;208m"
+005f87="\033[38;5;24m"
+0087af="\033[38;5;31m"
+5f87af="\033[38;5;67m"
+5fafaf="\033[38;5;73m"
+5fd7d7="\033[38;5;80m"
+00d7d7="\033[38;5;44m"
+5fffd7="\033[38;5;86m"
+5fffff="\033[38;5;87m"
+87ffd7="\033[38;5;122m"
+00d7ff="\033[38;5;45m"
 
 # HACK: clear LOCAL_PATH from including last build target before calling
 # intermedites-dir-for
@@ -685,6 +766,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILE
 	$(call pretty,"Target boot image: $@")
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+        @echo -e ${CL_BCY}"Made boot image: $@"${CL_RST}
 	$(hide) $(AVBTOOL) add_hash_footer \
 	  --image $@ \
 	  --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
@@ -709,6 +791,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOT_S
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
 	$(BOOT_SIGNER) /boot $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).pk8 $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).x509.pem $@
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+        @echo -e ${CL_BCY}"Made boot image: $@"${CL_RST}
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKBOOTIMG) $(BOOT_SIGNER)
@@ -724,6 +807,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(VBOOT_
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@.unsigned
 	$(VBOOT_SIGNER) $(FUTILITY) $@.unsigned $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_SUBKEY).vbprivk $@.keyblock $@
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+        @echo -e ${CL_BCY}"Made boot image: $@"${CL_RST}
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKBOOTIMG) $(VBOOT_SIGNER) $(FUTILITY)
@@ -738,6 +822,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOTIM
 	$(call pretty,"Target boot image: $@")
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+        @echo -e ${CL_BCY}"Made boot image: $@"${CL_RST}
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKBOOTIMG)
@@ -1549,7 +1634,7 @@ endif
 
 
 $(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH)
-	@echo "Install system fs image: $@"
+	@echo -e ${CL_BCY}"Install system fs image: $@"${CL_RST}
 	$(copy-file-to-target)
 	$(hide) $(call assert-max-image-size,$@ $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 
@@ -2409,7 +2494,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_VENDOR_MANIFEST) \
 		$(INSTALLED_VENDOR_MATRIX) \
 		| $(ACP)
-	@echo "Package target files: $@"
+	@echo -e ${CL_YLW}"Package target files:"${CL_RST}" $@"
 	$(call create-system-vendor-symlink)
 	$(hide) rm -rf $@ $@.list $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
@@ -2782,7 +2867,7 @@ endif
 
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 		build/tools/releasetools/ota_from_target_files
-	@echo "Package OTA: $@"
+	@echo -e ${CL_PFX}"Package OTA:"${CL_RST}" $@"
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	   ./build/tools/releasetools/ota_from_target_files -v \
 	   --block \
@@ -2810,7 +2895,7 @@ name := $(name)-img-$(FILE_NAME_TAG)
 INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
 $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(ZIP2ZIP)
-	@echo "Package: $@"
+	@echo -e ${CL_YLW}"Package:"${CL_RST}" $@"
 	$(hide) $(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
 	   OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
 
@@ -2878,7 +2963,7 @@ name := $(name)-apps-$(FILE_NAME_TAG)
 
 APPS_ZIP := $(PRODUCT_OUT)/$(name).zip
 $(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE)
-	@echo "Package apps: $@"
+	@echo -e ${CL_YLW}"Package apps:"${CL_RST}" $@"
 	$(hide) rm -rf $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) apps_to_zip=`find $(TARGET_OUT_APPS) $(TARGET_OUT_APPS_PRIVILEGED) -mindepth 2 -maxdepth 3 -name "*.apk"`; \
