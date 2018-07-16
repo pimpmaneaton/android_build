@@ -1338,7 +1338,7 @@ define build-recoveryramdisk
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/etc $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
   @echo Copying baseline ramdisk...
   # Use rsync because "cp -Rf" fails to overwrite broken symlinks on Mac.
-  $(hide) rsync -a --exclude=etc --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
+  $(hide) rsync -a --exclude=etc --exclude=sdcard --exclude=vendor $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
   # Copy adbd from system/bin to recovery/root/sbin
   $(hide) cp -f $(TARGET_OUT_EXECUTABLES)/adbd $(TARGET_RECOVERY_ROOT_OUT)/sbin/adbd
   @echo Modifying ramdisk contents...
@@ -2231,6 +2231,10 @@ $(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL)
 	$(hide) $(AVBTOOL) make_vbmeta_image \
 	  --flag 2 --padding_size 4096 --output $@
 
+else ifdef BOARD_PREBUILT_VBMETAIMAGE
+INSTALLED_VBMETAIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta.img
+$(eval $(call copy-one-file,$(BOARD_PREBUILT_VBMETAIMAGE),$(INSTALLED_VBMETAIMAGE_TARGET)))
+
 endif # BOARD_AVB_ENABLE
 
 # -----------------------------------------------------------------
@@ -2745,6 +2749,10 @@ endif
 # it to $(zip_root)/IMAGES without passing some info into misc_info.txt for
 # regeneration.
 ifeq (true,$(BOARD_BUILD_DISABLED_VBMETAIMAGE))
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_VBMETAIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
+ifdef BOARD_PREBUILT_VBMETAIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_VBMETAIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
